@@ -5,7 +5,7 @@ from pathlib import Path
 from openai import OpenAI
 
 # OpenAI API key
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="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")
 
 app = FastAPI()
 
@@ -37,3 +37,4 @@ def get_ai_reply(user_message: str) -> str:
 async def chat(message: str = Form(...)):
     reply = get_ai_reply(message)
     return {"message": reply}
+
