@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>Oscorp AI Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #0d0d0d;
+      color: #f1f1f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .chat-container {
+      width: 100%;
+      max-width: 500px;
+      height: 90vh;
+      background: #1a1a1a;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(0, 255, 150, 0.3);
+    }
+    h2 {
+      text-align: center;
+      padding: 15px;
+      margin: 0;
+      font-size: 1.5rem;
+      background: linear-gradient(90deg, #00ff99, #00ccff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+    }
+    .chat-box {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      scroll-behavior: smooth;
+    }
+    .message {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 15px;
+      line-height: 1.4;
+      font-size: 0.95rem;
+      animation: fadeIn 0.3s ease-in-out;
+      word-wrap: break-word;
+    }
+    .message.user {
+      align-self: flex-end;
+      background: #00cc66;
+      color: #fff;
+      border-bottom-right-radius: 5px;
+    }
+    .message.bot {
+      align-self: flex-start;
+      background: #333;
+      border-bottom-left-radius: 5px;
+    }
+    .chat-form {
+      display: flex;
+      border-top: 1px solid #333;
+      background: #141414;
+      padding: 10px;
+    }
+    .chat-form input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      background: #222;
+      color: #f1f1f1;
+      font-size: 1rem;
+    }
+    .chat-form button {
+      margin-left: 10px;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: linear-gradient(90deg, #00ff99, #00ccff);
+      color: #000;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .chat-form button:hover {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+    .chat-box::-webkit-scrollbar {
+      width: 6px;
+    }
+    .chat-box::-webkit-scrollbar-thumb {
+      background: #00ff99;
+      border-radius: 10px;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(5px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    @media (max-width: 600px) {
+      .chat-container {height: 95vh; border-radius: 0;}
+      h2 {font-size: 1.2rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <h2>Oscorp AI</h2>
+    <div id="chat-box" class="chat-box"></div>
+    <form id="chat-form" class="chat-form">
+      <input type="text" id="message" placeholder="Xabar yozing..." required>
+      <button type="submit">➤</button>
+    </form>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById("chat-box");
+    function addMessage(sender, text) {
+      const div = document.createElement("div");
+      div.className = sender === "user" ? "message user" : "message bot";
+      div.innerText = text;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    document.getElementById("chat-form").onsubmit = async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById("message").value;
+      addMessage("user", msg);
+      let formData = new FormData();
+      formData.append("message", msg);
+      const res = await fetch("/chat", { method: "POST", body: formData });
+      const data = await res.json();
+      addMessage("bot", data.message);
+      document.getElementById("message").value = "";
+    };
+  </script>
+</body>
+</html>
